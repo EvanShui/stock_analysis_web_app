@@ -9,6 +9,7 @@ from dateutil.relativedelta import *
 import numpy as np
 import pandas as pd
 
+
 def data_to_CDS(start_date):
     df = data.DataReader(name=stock_ticker, data_source="google", start=start_date, end=date.today())
     source = ColumnDataSource(data=dict(
@@ -17,9 +18,15 @@ def data_to_CDS(start_date):
     ))
     return source
 
+
 def plot(p, source):
-    '''p.line('date', 'price', source=source)'''
-    p.circle('date', 'price', size=10, source=source)
+    p.line('date', 'price', source=source, line_width=2)
+    p.circle('date', 'price', size=5, source=source, fill_color='white')
+
+
+def string_to_datetime(string):
+    return datetime.datetime.fromtimestamp(string / 1e3)
+
 
 delta_7_days = date.today() + relativedelta(days=-7)
 delta_month = date.today() + relativedelta(months=-1)
@@ -32,12 +39,13 @@ date_titles = ["week", "month", "3 months", "6 months", "year", "5 years"]
 start = datetime.datetime(2016, 3, 1)
 source = None
 stock_ticker = "ATVI"
-month_url = str(1)
-day_url = str(1)
-year_url = str(2011)
-url = "https://www.google.com/"
+month = str(1)
+day = str(1)
+year = str(2011)
+url ="https://www.google.com/search?q=" + "@date[%F]"
+print(url.split("=")[1])
 sources_list = [data_to_CDS(date) for date in dates]
-figures_list = [figure(x_axis_type='datetime', width=1500, height=400,
+figures_list = [figure(x_axis_type='datetime', width=1500, height=400, tools="tap",
            title=title) for title in date_titles]
 fig_source_tuple_list = zip(figures_list,sources_list)
 fig_date_tuple_list = zip(figures_list, date_titles)
